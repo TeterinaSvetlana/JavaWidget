@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component ;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 public class ManageWidget {
 
     @Autowired
@@ -67,6 +69,7 @@ public class ManageWidget {
         widget.setDate();
     }
 
+    @GetMapping("/widgets")
     public List<Widget> getAllWidgets(){
         List<Widget> sortedList = new ArrayList<Widget>();
         sortedList = widgetList;

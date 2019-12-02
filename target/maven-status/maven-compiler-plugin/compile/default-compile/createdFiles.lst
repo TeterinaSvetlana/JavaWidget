@@ -1,0 +1,6 @@
+MiroWidget\Widget.class
+MiroWidget\WidgetComparator.class
+web\WebController.class
+web\Main.class
+MiroWidget\ManageWidget.class
+web\BaseResponse.class
