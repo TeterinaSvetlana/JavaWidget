@@ -17,7 +17,9 @@ public class WidgetController {
 
     @Autowired
     public static List<Widget> widgetList = new ArrayList();
-    public static List<Widget> selectedWidgets = new ArrayList<>();
+
+    @Autowired
+    public static List<Widget> selectedWidgets = new ArrayList();
     public Area area;
 
 //    @PostMapping
@@ -165,44 +167,34 @@ public class WidgetController {
 
     @DeleteMapping("widgets/{id}")
     public void deleteWidget(@PathVariable UUID id){
-//        for (Widget w : widgetList)
-//        {
-//            if (w.getId() == id)
-//            {
-//                int index = widgetList.indexOf(w);
-//                widgetList.remove(index);
-//                break;
-//            }
-//        }
+//
         Widget widget = getWidget(id);
         widgetList.remove(widget);
     }
 
     @GetMapping("area")
     public List<Widget> getWidgetsInArea(){
-        int x1 = area.getX1();
-        int y1 = area.getY1();
-        int x2 = area.getX2();
-        int y2 = area.getY2();
-        int width = x2-x1;
-        int hight = y2-y1;
+        if (area != null) {
+            int x1 = area.getX1();
+            int y1 = area.getY1();
+            int x2 = area.getX2();
+            int y2 = area.getY2();
 
-        for (Widget w : widgetList) {
-//            if ((w.getX()>x1)&&(w.getX()<x2)) {
-//                if ((w.getY()>y1)&&(w.getY()<y2)) {
-//                    selectedWidgets.add(w);
-//                }
-//            }
-//            if ((w.getX()<x1)&&(w.getX()<x2)) {
+            for (Widget w : widgetList) {
 //
-//            }
-            if ((intersectX(w.getX(), w.getWidth(), x1, x2)==true)&&(intersectY(w.getY(), w.getHight(), y1, y2)==true)) {
-                selectedWidgets.add(w);
+                if ((intersectX(w.getX(), w.getWidth(), x1, x2) == true) && (intersectY(w.getY(), w.getHight(), y1, y2) == true)) {
+                    selectedWidgets.add(w);
+                }
             }
         }
 
+        List<Widget> widgetsInArea = new ArrayList<Widget>();
+        widgetsInArea = selectedWidgets;
+        Collections.sort(widgetsInArea, new WidgetComparator());
 
-        return selectedWidgets;
+
+
+        return widgetsInArea;
     }
 
     public boolean intersectX(int x, int width, int x1, int x2){
