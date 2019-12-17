@@ -1,6 +1,6 @@
 package MiroWidget;
 
-import MiroWidget.Widget;
+import MiroWidget.enities.Widget;
 
 import java.util.Comparator;
 
