@@ -65,12 +65,12 @@ public class WidgetController {
         return widget;
     }
 
-    @PostMapping("widgets")
+    @PostMapping("/widgets")
     public Widget create(@RequestBody Widget widget) {
 //        widget..put("id", String.valueOf(counter++));
 
 //        widgetList.add(widget);
-
+//        Widget newWidget = new Widget();
         widget.setId();
         widget.setDate();
 
@@ -92,7 +92,12 @@ public class WidgetController {
         }
 
         if (z == 0) {
-            z = widgetList.get(widgetList.size()-2).getIndex() + 1;
+            if (widgetList.size() > 1) {
+                z = widgetList.get(widgetList.size() - 2).getIndex() + 1;
+            }
+            else {
+                z = 1;
+            }
 //            System.out.println(widgetList.get(widgetList.size()-2).getId());
             widget.setIndex(z);
         }
@@ -102,7 +107,7 @@ public class WidgetController {
         return widget;
     }
 
-    @GetMapping("widgets/{id}")
+    @GetMapping("/widgets/{id}")
     public Widget getOneWidget(@PathVariable UUID id){
         return getWidget(id);
 //        System.out.println(id);
@@ -134,7 +139,7 @@ public class WidgetController {
 //        return null;
     }
 
-    @PutMapping("widgets/{id}")
+    @PutMapping("/widgets/{id}")
     public synchronized Widget updateWidget(@PathVariable UUID id, @RequestBody Widget widget) {//UUID id, int x, int y, int z){
 //        Widget widget = getWidget(id);
 //
@@ -154,8 +159,8 @@ public class WidgetController {
         return widget;
     }
 
-    @GetMapping("widgets")
-    public List<Widget> getAllWidgets(){
+    @GetMapping("/widgets")
+    public static List<Widget> getAllWidgets(){
         List<Widget> sortedList = new ArrayList<Widget>();
         sortedList = widgetList;
         Collections.sort(sortedList, new WidgetComparator());
@@ -165,14 +170,14 @@ public class WidgetController {
         return sortedList;
     }
 
-    @DeleteMapping("widgets/{id}")
+    @DeleteMapping("/widgets/{id}")
     public void deleteWidget(@PathVariable UUID id){
 //
         Widget widget = getWidget(id);
         widgetList.remove(widget);
     }
 
-    @GetMapping("area")
+    @GetMapping("/area")
     public List<Widget> getWidgetsInArea(){
         if (area != null) {
             int x1 = area.getX1();
@@ -221,7 +226,7 @@ public class WidgetController {
         return false;
     }
 
-    @PostMapping("area")
+    @PostMapping("/area")
     public Area createArea(@RequestBody Area newArea) {
 //        widget..put("id", String.valueOf(counter++));
 
