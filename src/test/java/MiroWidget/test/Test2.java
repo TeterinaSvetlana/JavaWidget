@@ -11,9 +11,14 @@ import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 //import static MiroWidget.WidgetController.widgetList;
@@ -28,14 +33,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class Test2 {
     private MockMvc mockMvc;
 
-    @Mock
-    public Widget widget;
+//    @Mock
+//    private Widget widget;
 
-    @Mock
-    public static List<Widget> widgetList = new ArrayList<Widget>();
+//    @InjectMocks
+    private static List<Widget> widgetList = new ArrayList();
 
-    @InjectMocks
-    public WidgetController widgetControler;
+//    @Mock
+    private WidgetController widgetControler = new WidgetController();
 
     @Before
     public void setUp() throws Exception {
@@ -45,27 +50,34 @@ public class Test2 {
 
     }
 
+
+
     @Test
     public void testHelloWorld() throws Exception {
         Widget widget = new Widget();
-
+//        widget = new Widget();
         widget.setDate();
         widget.setId();
         widget.setIndex(1);
-        widget.setX(1);
+        widget.setX(12346);
         widget.setY(1);
         widget.setHight(10);
         widget.setWidth(10);
 
-        List<Widget> widgetList = new ArrayList<Widget>();
-        widgetList.add(widget);
+//        List<Widget> widgetList = new ArrayList<Widget>();
+//        widgetList.add(widget);
+        
+        widgetControler.create(widget);
 
-//        when(widget.getX()).thenReturn(1);
-        mockMvc.perform(get("/widgets"))
-                .andExpect(status().isOk());
-                //.andExpect(content().string("hello"));
+//        when(widgetControler.create(widget)).thenReturn(widget);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/widgets"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[{ x: 2, y: 1, width: 1, hight: 1, index: 1 }]"))
+                .andReturn();
+        System.out.println(mvcResult.getResponse());
+//                .andExpect(content().string("[{ x: 2, y: 1, width: 1, hight: 1, index: 1 }]"));
 
-//        verify(widget).getX();
+//        verify(widgetControler).create(widget);
     }
 
     @Test
@@ -78,7 +90,13 @@ public class Test2 {
 //                "    body: JSON.stringify({ x: 2, y: 1, width: 1, hight:1 })\n" +
 //                "  }\n" +
 //                ")";
-        String json = "{ x: 2, y: 1, width: 1, hight:1 }";
+//        String json = "[{ x: 2, y: 1, width: 1, hight: 1, index: 1 }]";
+        String json = "{\n" +
+                "  \"x\": \"1\",\n" +
+                "  \"y\": \"1\"\n" +
+                "  \"width\": \"1\",\n" +
+                "  \"hight\": \"1\"\n" +
+                "}";
         mockMvc.perform(post("/widgets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))

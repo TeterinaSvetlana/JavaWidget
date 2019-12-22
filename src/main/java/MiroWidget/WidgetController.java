@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("widgets")
+@RequestMapping("/widgets")
 public class WidgetController {
 
-    @Autowired
+//    @Autowired
     public static List<Widget> widgetList = new ArrayList();
 
     @Autowired
@@ -65,7 +65,7 @@ public class WidgetController {
         return widget;
     }
 
-    @PostMapping("/widgets")
+    @PostMapping
     public Widget create(@RequestBody Widget widget) {
 //        widget..put("id", String.valueOf(counter++));
 
@@ -107,7 +107,7 @@ public class WidgetController {
         return widget;
     }
 
-    @GetMapping("/widgets/{id}")
+    @GetMapping("/{id}")
     public Widget getOneWidget(@PathVariable UUID id){
         return getWidget(id);
 //        System.out.println(id);
@@ -139,7 +139,7 @@ public class WidgetController {
 //        return null;
     }
 
-    @PutMapping("/widgets/{id}")
+    @PutMapping("/{id}")
     public synchronized Widget updateWidget(@PathVariable UUID id, @RequestBody Widget widget) {//UUID id, int x, int y, int z){
 //        Widget widget = getWidget(id);
 //
@@ -159,7 +159,7 @@ public class WidgetController {
         return widget;
     }
 
-    @GetMapping("/widgets")
+    @GetMapping
     public static List<Widget> getAllWidgets(){
         List<Widget> sortedList = new ArrayList<Widget>();
         sortedList = widgetList;
@@ -167,10 +167,25 @@ public class WidgetController {
 //        for (Widget widget : sortedList) {
 //            System.out.println("Id: " + widget.getId() +" Index: " + widget.getIndex() + " x " + widget.getWidth() + " y: " + widget.getHight() + " Date " + widget.getDate());
 //        }
-        return sortedList;
+        widgetList = sortedList;
+
+        Widget widget = new Widget();
+//        widget = new Widget();
+        widget.setDate();
+        widget.setId();
+        widget.setIndex(1);
+        widget.setX(1);
+        widget.setY(1);
+        widget.setHight(10);
+        widget.setWidth(10);
+
+//        List<Widget> widgetList = new ArrayList<Widget>();
+        widgetList.add(widget);
+
+        return widgetList;
     }
 
-    @DeleteMapping("/widgets/{id}")
+    @DeleteMapping("/{id}")
     public void deleteWidget(@PathVariable UUID id){
 //
         Widget widget = getWidget(id);
@@ -237,4 +252,5 @@ public class WidgetController {
 
         return newArea;
     }
+
 }
