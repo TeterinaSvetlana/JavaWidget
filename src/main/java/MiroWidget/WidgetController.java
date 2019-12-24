@@ -169,18 +169,18 @@ public class WidgetController {
 //        }
         widgetList = sortedList;
 
-        Widget widget = new Widget();
-//        widget = new Widget();
-        widget.setDate();
-        widget.setId();
-        widget.setIndex(1);
-        widget.setX(1);
-        widget.setY(1);
-        widget.setHight(10);
-        widget.setWidth(10);
-
-//        List<Widget> widgetList = new ArrayList<Widget>();
-        widgetList.add(widget);
+//        Widget widget = new Widget();
+////        widget = new Widget();
+//        widget.setDate();
+//        widget.setId();
+//        widget.setIndex(1);
+//        widget.setX(1);
+//        widget.setY(1);
+//        widget.setHight(10);
+//        widget.setWidth(10);
+//
+////        List<Widget> widgetList = new ArrayList<Widget>();
+//        widgetList.add(widget);
 
         return widgetList;
     }
