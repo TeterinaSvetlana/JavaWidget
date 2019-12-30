@@ -1,8 +1,5 @@
 package MiroWidget.enities;
 
-import java.util.Date;
-import java.util.UUID;
-
 public class Area {
     private int x1;
     private int y1;
@@ -11,7 +8,7 @@ public class Area {
 
 
     public Area(){}
-    protected Area(int x1, int y1, int x2, int y2){
+    public Area(int x1, int y1, int x2, int y2){
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;

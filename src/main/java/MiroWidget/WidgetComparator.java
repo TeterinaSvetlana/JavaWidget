@@ -7,20 +7,20 @@ import java.util.Comparator;
 public class WidgetComparator implements Comparator<Widget> {
     @Override
     public int compare(Widget o1, Widget o2) {
-        // Два объекта null считаются равными.
+        // Null objects are considered to be equal.
         if (o1 == null && o2 == null) {
             return 0;
         }
-        // Если o1 является null, считается что o2 больше
+        // If o1 is null, o2 is considered to be bigger.
         if (o1 == null) {
             return -1;
         }
-        // Если o2 является null, считается что o1 больше.
+        // If o2 is null, o1 is considered to be bigger.
         if (o2 == null) {
             return 1;
         }
-        // Правило:
-        // Распределить по возрастанию индекса.
+        // Rule:
+        // Distribute in ascending order of index.
         int value = o1.getIndex() - o2.getIndex();
         if (value != 0) {
             return value;

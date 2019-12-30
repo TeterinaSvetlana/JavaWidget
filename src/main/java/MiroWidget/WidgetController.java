@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/widgets")
 public class WidgetController {
 
-//    @Autowired
-    public static List<Widget> widgetList = new ArrayList();
+    public static List<Widget> widgetList = new ArrayList(); // List with all widgets.
 
     @Autowired
-    public static List<Widget> selectedWidgets = new ArrayList();
+    public static List<Widget> selectedWidgets = new ArrayList(); // List with widgets, intersecting the area.
     public Area area;
+    boolean areaChanged = false;
 
-//    @PostMapping
     public Widget createWidget(int x, int y, int width, int hight, int z){
         Widget widget = new Widget();
         widget.setId();
@@ -33,57 +32,21 @@ public class WidgetController {
         widget.setHight(hight);
         widget.setWidth(width);
 
-        widgetList.add(widget);
+        checkIndex(z, widget);
 
-        for (Widget w : widgetList) {
-            if (z <= w.getIndex() && widget.getId() != w.getId()) {
-                w.setIndex(w.getIndex()+ 1);
-            }
-        }
+        widgetList.add(widget);
+        Collections.sort(widgetList, new WidgetComparator());
 
         return widget;
     }
 
-//    @PostMapping
-    public Widget createWidget(int x, int y){
-        //Date date = new Date();
-        Widget widget = new Widget();
-        widget.setId();
-        widget.setDate();
-        widget.setHight(y);
-        widget.setWidth(x);
-        int z = 0;
-        for (Widget w : widgetList) {
-            if (z <= w.getIndex()) {
-               z = w.getIndex();
-            }
-        }
-        z++;
-        widget.setIndex(z);
-        widgetList.add(widget);
-
-        return widget;
-    }
-
-    @PostMapping
-    public Widget create(@RequestBody Widget widget) {
-//        widget..put("id", String.valueOf(counter++));
-
-//        widgetList.add(widget);
-//        Widget newWidget = new Widget();
-        widget.setId();
-        widget.setDate();
-
-        widgetList.add(widget);
-
-        int z = widget.getIndex();
-
+    // Sets right index.
+    public void checkIndex(int z, Widget widget) {
         if (z > 0) {
             int i = 0;
             for (Widget w : widgetList) {
                 if (widget.getId() != w.getId()) {
                     if (z == w.getIndex()) {
-//                    w.setIndex(w.getIndex()+1);
                         i++;
                     }
                     w.setIndex(w.getIndex() + i);
@@ -92,17 +55,28 @@ public class WidgetController {
         }
 
         if (z == 0) {
-            if (widgetList.size() > 1) {
-                z = widgetList.get(widgetList.size() - 2).getIndex() + 1;
+            if (widgetList.size() >= 1) {
+                z = widgetList.get(widgetList.size() - 1).getIndex() + 1;
             }
             else {
                 z = 1;
             }
-//            System.out.println(widgetList.get(widgetList.size()-2).getId());
             widget.setIndex(z);
         }
+    }
 
+    @PostMapping
+    public Widget create(@RequestBody Widget widget) {
+        widget.setId();
+        widget.setDate();
 
+        int z = widget.getIndex();
+
+        checkIndex(z, widget);
+
+        widgetList.add(widget);
+
+        Collections.sort(widgetList, new WidgetComparator());
 
         return widget;
     }
@@ -110,16 +84,6 @@ public class WidgetController {
     @GetMapping("/{id}")
     public Widget getOneWidget(@PathVariable UUID id){
         return getWidget(id);
-//        System.out.println(id);
-//        for(Widget widget: widgetList){
-//            System.out.println(widget.getId());
-//            if(widget.getId() == id){
-//                System.out.println("not null");
-//                return widget;
-//            }
-//        }
-//        System.out.println("null");
-//        return null;
     }
 
     public Widget getWidget(@PathVariable UUID id){
@@ -127,69 +91,28 @@ public class WidgetController {
                 .filter(widget -> widget.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
-//        System.out.println(id);
-//        for(Widget widget: widgetList){
-//            System.out.println(widget.getId());
-//            if(widget.getId() == id){
-//                System.out.println("not null");
-//                return widget;
-//            }
-//        }
-//        System.out.println("null");
-//        return null;
     }
 
     @PutMapping("/{id}")
-    public synchronized Widget updateWidget(@PathVariable UUID id, @RequestBody Widget widget) {//UUID id, int x, int y, int z){
-//        Widget widget = getWidget(id);
-//
-//        widget.setWidth(x);
-//        widget.setHight(y);
-//        widget.setIndex(z);
-
+    public synchronized Widget updateWidget(@PathVariable UUID id, @RequestBody Widget widget) {
         deleteWidget(id);
         create(widget);
         widget.setExistingId(id);
-
-//        Widget updatedWidget = getWidget(id);
-//
-//        updatedWidget.putAll(widget);
-//        updatedWidget.put("id", id);
+        Collections.sort(widgetList, new WidgetComparator());
 
         return widget;
     }
 
     @GetMapping
     public static List<Widget> getAllWidgets(){
-        List<Widget> sortedList = new ArrayList<Widget>();
-        sortedList = widgetList;
-        Collections.sort(sortedList, new WidgetComparator());
-//        for (Widget widget : sortedList) {
-//            System.out.println("Id: " + widget.getId() +" Index: " + widget.getIndex() + " x " + widget.getWidth() + " y: " + widget.getHight() + " Date " + widget.getDate());
-//        }
-        widgetList = sortedList;
-
-//        Widget widget = new Widget();
-////        widget = new Widget();
-//        widget.setDate();
-//        widget.setId();
-//        widget.setIndex(1);
-//        widget.setX(1);
-//        widget.setY(1);
-//        widget.setHight(10);
-//        widget.setWidth(10);
-//
-////        List<Widget> widgetList = new ArrayList<Widget>();
-//        widgetList.add(widget);
-
         return widgetList;
     }
 
     @DeleteMapping("/{id}")
     public void deleteWidget(@PathVariable UUID id){
-//
         Widget widget = getWidget(id);
         widgetList.remove(widget);
+        Collections.sort(widgetList, new WidgetComparator());
     }
 
     @GetMapping("/area")
@@ -200,10 +123,12 @@ public class WidgetController {
             int x2 = area.getX2();
             int y2 = area.getY2();
 
-            for (Widget w : widgetList) {
-//
-                if ((intersectX(w.getX(), w.getWidth(), x1, x2) == true) && (intersectY(w.getY(), w.getHight(), y1, y2) == true)) {
-                    selectedWidgets.add(w);
+            // If area has been changed, pick up widgets for it.
+            if (areaChanged) {
+                for (Widget w : widgetList) {//
+                    if ((intersectX(w.getX(), w.getWidth(), x1, x2) == true) && (intersectY(w.getY(), w.getHight(), y1, y2) == true)) {
+                        selectedWidgets.add(w);
+                    }
                 }
             }
         }
@@ -211,30 +136,29 @@ public class WidgetController {
         List<Widget> widgetsInArea = new ArrayList<Widget>();
         widgetsInArea = selectedWidgets;
         Collections.sort(widgetsInArea, new WidgetComparator());
-
-
+        areaChanged = false;
 
         return widgetsInArea;
     }
 
-    public boolean intersectX(int x, int width, int x1, int x2){
-
+    // Checks if current widget intersects chosen area's x coordinate.
+    private boolean intersectX(int x, int width, int x1, int x2){
         if ((x>x1)&&(x<x2)) {
             return true;
         }
-        if ((x<x1)&&(x+width < x2)) {
+        if ((x<x1)&&(x+width > x1)) {
             return true;
         }
 
         return false;
     }
 
-    public boolean intersectY(int y, int hight, int y1, int y2){
-
+    // Checks if current widget intersects chosen area's y coordinate.
+    private boolean intersectY(int y, int hight, int y1, int y2){
         if ((y>y1)&&(y<y2)) {
             return true;
         }
-        if ((y<y1)&&(y+hight < y2)) {
+        if ((y<y1)&&(y+hight > y1)) {
             return true;
         }
 
@@ -243,13 +167,8 @@ public class WidgetController {
 
     @PostMapping("/area")
     public Area createArea(@RequestBody Area newArea) {
-//        widget..put("id", String.valueOf(counter++));
-
-//        widgetList.add(widget);
-
         area = newArea;
-
-
+        areaChanged = true;
         return newArea;
     }
 

@@ -1,7 +1,6 @@
 package MiroWidget.enities;
 
 import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component ;
 
 @Component
@@ -16,7 +15,7 @@ public class Widget {
     private UUID id;
 
     public Widget(){}
-    protected Widget(int x, int y, int hight, int width, int z, Date date, UUID id){
+    public Widget(int x, int y, int hight, int width, int z, Date date, UUID id){
         this.x = x;
         this.y = y;
         this.hight = hight;
@@ -24,6 +23,14 @@ public class Widget {
         this.z = z;
         this.date = date;
         this.id = id;
+    }
+
+    public Widget(int x, int y, int hight, int width, int z){
+        this.x = x;
+        this.y = y;
+        this.hight = hight;
+        this.width = width;
+        this.z = z;
     }
 
     public int getX() {
